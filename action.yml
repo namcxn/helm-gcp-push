@@ -1,0 +1,47 @@
+# action.yml
+name: 'Helm OCI Push'
+description: 'Pushes a local chart to a GCP OCI compatible registry' 
+branding:
+  color: 'green'
+  icon: 'upload-cloud'
+inputs:
+  username:
+    description: 'Username read/write permissions to the helm registry'
+    required: false
+    default: ''
+  registry-url:
+    description: 'Repository url'
+    required: true
+    default: ''
+  chart-folder:
+    description: 'Relative path to chart folder'
+    required: false
+    default: 'chart'
+  gcp-wip:
+    description: 'If publishing to big cloud registries, utilizing OCI container spec for helm packages, set to true'
+    required: true
+    default: 'true'
+  gcp-location:
+    description: 'The chosen location determines where the repository storage is created. Default: us'
+    required: true
+    default: 'us'
+  source-dir:
+    description: 'The local directory you wish to upload'
+    required: no
+    default: '.'
+    # valid list of args for `helm repo add $args` each line maps to repo add e.g.
+    # add-repositories: |
+    #     stable https://charts.helm.sh/stable
+    #     private https//private.internal --username private --password 'bulls eye'
+    #     ...
+    default: ''
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  env:
+    CHART_FOLDER: ${{ inputs.chart-folder }}
+    REGISTRY_URL: ${{ inputs.registry-url }}
+    REGISTRY_USERNAME: ${{ inputs.username }}
+    GCP_WIP: ${{ inputs.gcp-wip }}
+    GCP_LOCATION: ${{ input.gcp-location }}
+    SOURCE_DIR: ${{ input.source-dir }}
