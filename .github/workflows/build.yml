@@ -1,0 +1,52 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]+"
+
+env:
+  IMAGE_NAME: namcxn/helm-gcp-push
+  PLATFORMS: linux/amd64
+
+jobs:
+  push:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+        
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - uses: docker/login-action@v3
+        with:
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.CR_PAT }}
+
+      - name: Determine tag or commit
+        uses: haya14busa/action-cond@94f77f7a80cd666cb3155084e428254fea4281fd #v1.2.1
+        id: refortag
+        with:
+          cond: ${{ startsWith(github.ref, 'refs/tags/') }}
+          if_true: ${{ github.ref }}
+          if_false: latest
+
+      - name: Determine image tag
+        id: imagetag
+        run: echo "::set-output name=value::${TAG_OR_BRANCH##*/}"
+        env:
+          TAG_OR_BRANCH: ${{ steps.refortag.outputs.value }}
+
+      - name: Build and push image
+        uses: docker/build-push-action@v3
+        with:
+          tags: ${{ env.IMAGE_NAME }}:${{ steps.imagetag.outputs.value }}
+          file: Dockerfile
+          platforms: ${{ env.PLATFORMS }}
+          push: true
+

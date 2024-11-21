@@ -8,7 +8,7 @@ inputs:
   username:
     description: 'Username read/write permissions to the helm registry'
     required: false
-    default: ''
+    default: 'oauth2accesstoken'
   registry-url:
     description: 'Repository url'
     required: true
@@ -17,13 +17,17 @@ inputs:
     description: 'Relative path to chart folder'
     required: false
     default: 'chart'
-  gcp-wip:
+  gcp-wip-docker:
     description: 'If publishing to big cloud registries, utilizing OCI container spec for helm packages, set to true'
     required: true
     default: 'true'
+  gcp-access-token:
+    description:
+    required: false
+    default: ''
   gcp-location:
     description: 'The chosen location determines where the repository storage is created. Default: us'
-    required: true
+    required: false
     default: 'us'
   source-dir:
     description: 'The local directory you wish to upload'
@@ -42,6 +46,9 @@ runs:
     CHART_FOLDER: ${{ inputs.chart-folder }}
     REGISTRY_URL: ${{ inputs.registry-url }}
     REGISTRY_USERNAME: ${{ inputs.username }}
-    GCP_WIP: ${{ inputs.gcp-wip }}
-    GCP_LOCATION: ${{ input.gcp-location }}
-    SOURCE_DIR: ${{ input.source-dir }}
+    REGISTRY_TOKEN: ${{ inputs.token }}
+    GCP_WIP_DOCKER: ${{ inputs.gcp-wip }}
+    GCP_ACCESS_TOKEN: ${{ intputs.gcp-access-token }}
+    GCP_LOCATION: ${{ inputs.gcp-location }}
+    SOURCE_DIR: ${{ inputs.source-dir }}
+

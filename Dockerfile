@@ -1,11 +1,11 @@
 FROM plugins/base:linux-amd64
 
 LABEL maintainer="namcxn" \
-  org.label-schema.name="helm chart push" \
+  org.label-schema.name="helm GCP push" \
   org.label-schema.vendor="namcxn" \
   org.label-schema.schema-version="1.0"
 
-ENV HELM_VERSION v3.16.3
+ENV HELM_VERSION=v3.16.3
 
 ENV XDG_CONFIG_DIR=/opt
 ENV XDG_DATA_HOME=/opt

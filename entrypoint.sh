@@ -2,10 +2,6 @@
 set -e
 set -x
 
-_local_push (
-  helm push ${CHART_FOLDER}-* ${REGISTRY_URL}
-)
-
 if [[ -z "$CHART_FOLDER" ]]; then
   echo "Chart folder is required but not defined."
   exit 1
@@ -42,14 +38,19 @@ helm dependency update .
 
 helm package .
 
-if [[ "$GCP_WIP" == "FALSE" ]]; then
-  gcloud auth application-default print-access-token | helm registry login -u "$REGISTRY_USER" \
+if [[ "$GCP_ACCESS_TOKEN" == "TRUE" ]]; then
+  echo "$REGISTRY_TOKEN" | helm registry login -u "$REGISTRY_USER" \
       --password-stdin https://"$GCP_LOCATION"-docker.pkg.dev
   _local_push
 fi
 
-if [[ "$GCP_WIP" == "TRUE" ]]; then
-  gcloud auth configure-docker "$GCP_LOCATION"-docker.pkg.dev
+if [[ "$GCP_WIP_DOCKER" == "TRUE" ]]; then
+  # Need setup GCP WIP and login at github action
+  # gcloud auth configure-docker [location]-docker.pkg.dev -q
   _local_push
 fi
 
+_local_push (
+  helm push ${CHART_FOLDER}-* ${REGISTRY_URL}
+)
+_
