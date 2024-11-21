@@ -23,11 +23,6 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - uses: docker/login-action@v3
-        with:
-          username: ${{ github.repository_owner }}
-          password: ${{ secrets.CR_PAT }}
-
       - name: Determine tag or commit
         uses: haya14busa/action-cond@94f77f7a80cd666cb3155084e428254fea4281fd #v1.2.1
         id: refortag
@@ -48,5 +43,4 @@ jobs:
           tags: ${{ env.IMAGE_NAME }}:${{ steps.imagetag.outputs.value }}
           file: Dockerfile
           platforms: ${{ env.PLATFORMS }}
-          push: true
-
+          push: false
