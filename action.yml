@@ -1,5 +1,5 @@
 # action.yml
-name: 'Helm OCI Push'
+name: 'Helm GCP Push'
 description: 'Pushes a local chart to a GCP OCI compatible registry' 
 branding:
   color: 'green'
